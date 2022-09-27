@@ -135,7 +135,7 @@ static int first_allocations = true;
 // TODO: Find out whether non-xtensa ESP-IDF platforms call malloc from within
 // interrupts.  This has been deprecated for years, but may still be in the
 // code base.  For now, don't tag allocations.
-#define GET_THREAD_LOCAL_TAG null
+#define GET_THREAD_LOCAL_TAG NULL
 #else
 #define GET_THREAD_LOCAL_TAG (pvTaskGetThreadLocalStoragePointer(NULL, MULTI_HEAP_THREAD_TAG_INDEX))
 #endif
@@ -1753,7 +1753,9 @@ void cmpct_set_option(cmpct_heap_t *heap, int option, void *value)
 {
     if (option == MALLOC_OPTION_THREAD_TAG) {
 #if !defined(TEST_CMPCTMALLOC) && !defined(CMPCTMALLOC_ON_LINUX)
+#if __XTENSA__
         first_allocations = false;
+#endif
         assert(MULTI_HEAP_THREAD_TAG_INDEX < configNUM_THREAD_LOCAL_STORAGE_POINTERS);
         vTaskSetThreadLocalStoragePointer(NULL, MULTI_HEAP_THREAD_TAG_INDEX, value);
 #else
